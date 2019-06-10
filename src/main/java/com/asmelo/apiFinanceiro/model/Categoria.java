@@ -11,19 +11,19 @@ public class Categoria {
     @Id
     @GeneratedValue
     @Column(name = "idcategoria")
-    private Integer idcategoria;
+    private Integer id;
     @Column(name = "nome")
     private String nome;
 
     public Categoria() {
     }
 
-    public Integer getIdcategoria() {
-        return idcategoria;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdcategoria(Integer idcategoria) {
-        this.idcategoria = idcategoria;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNome() {
