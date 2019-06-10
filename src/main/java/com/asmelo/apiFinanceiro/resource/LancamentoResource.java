@@ -34,7 +34,7 @@ public class LancamentoResource {
     @Autowired
     SubcategoriaRepository subcategoriaRepository;
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
     @GetMapping(path = "")
     public HashMap<String, List> findByMonth(@RequestParam("ano") int ano, @RequestParam("mes") int mes) {
         HashMap<String, List> map = new HashMap<>();
@@ -48,7 +48,7 @@ public class LancamentoResource {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
     @GetMapping(path = "{idLancamento}")
     public HashMap<String, Lancamento> findById(@PathVariable Integer idLancamento) {
         HashMap<String, Lancamento> map = new HashMap<>();
@@ -56,7 +56,7 @@ public class LancamentoResource {
         return map;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
     @PostMapping("")
     public HashMap<String, Lancamento> save(@RequestBody final String lancamento) {
         try {
@@ -83,7 +83,7 @@ public class LancamentoResource {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
     @PutMapping("/{idLancamento}")
     public HashMap<String, Lancamento> update(@PathVariable Integer idLancamento, @RequestBody final String lancamento) {
         try {
@@ -110,7 +110,7 @@ public class LancamentoResource {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
     @DeleteMapping("/{idLancamento}")
     public Object delete(@PathVariable Integer idLancamento) {
         lancamentoRepository.deleteById(idLancamento);

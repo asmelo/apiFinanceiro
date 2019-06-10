@@ -15,7 +15,7 @@ public class SubcategoriaResource {
     @Autowired
     SubcategoriaRepository subcategoriaRepository;
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
     @GetMapping(value = "")
     public HashMap<String, List<Subcategoria>> findAll() {
         HashMap<String, List<Subcategoria>> map = new HashMap<>();
