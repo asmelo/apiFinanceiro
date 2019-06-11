@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.*;
 
 import org.json.JSONArray;
@@ -71,6 +72,11 @@ public class LancamentoResource {
             ObjectMapper mapper = new ObjectMapper();
             Reader reader = new StringReader(lancamentoJson);
             Lancamento lancamentoObj = mapper.readValue(reader, Lancamento.class);
+
+            if(lancamentoObj.getCdtipo() == 2){
+                lancamentoObj.setValor(lancamentoObj.getValor().multiply(BigDecimal.valueOf(-1)));
+            }
+
             Lancamento newLancamento = lancamentoRepository.save(lancamentoObj);
             HashMap<String, Lancamento> map = new HashMap<>();
             map.put("lancamento", newLancamento);
@@ -99,6 +105,12 @@ public class LancamentoResource {
             Reader reader = new StringReader(lancamentoJson);
             Lancamento lancamentoObj = mapper.readValue(reader, Lancamento.class);
             lancamentoObj.setId(idLancamento);
+
+            if((lancamentoObj.getCdtipo() == 2 && lancamentoObj.getValor().compareTo(BigDecimal.ZERO) > 0) ||
+                    lancamentoObj.getCdtipo() == 1 && lancamentoObj.getValor().compareTo(BigDecimal.ZERO) < 0){
+                lancamentoObj.setValor(lancamentoObj.getValor().multiply(BigDecimal.valueOf(-1)));
+            }
+
             lancamentoRepository.save(lancamentoObj);
         } catch (JSONException e) {
             e.printStackTrace();
