@@ -17,7 +17,7 @@ public class Lancamento {
     @Column(name = "idconta")
     private Integer idconta;
     @Column(name = "idsubcategoria")
-    private String subcategoria;
+    private Integer subcategoria;
     @Column(name = "cdtipo")
     private Integer cdtipo;
     @Column(name = "dtlancamento")
@@ -49,11 +49,11 @@ public class Lancamento {
         this.idconta = idconta;
     }
 
-    public String getSubcategoria() {
+    public Integer getSubcategoria() {
         return subcategoria;
     }
 
-    public void setSubcategoria(String subcategoria) {
+    public void setSubcategoria(Integer subcategoria) {
         this.subcategoria = subcategoria;
     }
 

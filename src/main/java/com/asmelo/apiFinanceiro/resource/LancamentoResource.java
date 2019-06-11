@@ -1,11 +1,13 @@
 package com.asmelo.apiFinanceiro.resource;
 
 import com.asmelo.apiFinanceiro.model.Lancamento;
+import com.asmelo.apiFinanceiro.model.PalavraChave;
 import com.asmelo.apiFinanceiro.model.Subcategoria;
 import com.asmelo.apiFinanceiro.repository.LancamentoRepository;
+import com.asmelo.apiFinanceiro.repository.PalavraChaveRepository;
 import com.asmelo.apiFinanceiro.repository.SubcategoriaRepository;
+import com.asmelo.apiFinanceiro.service.ArquivoOfx;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
@@ -18,9 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.json.JSONArray;
 
@@ -33,6 +33,12 @@ public class LancamentoResource {
 
     @Autowired
     SubcategoriaRepository subcategoriaRepository;
+
+    @Autowired
+    PalavraChaveRepository palavraChaveRepository;
+
+    @Autowired
+    ArquivoOfx arquivoOfx;
 
     @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
     @GetMapping(path = "")
@@ -115,5 +121,57 @@ public class LancamentoResource {
     public Object delete(@PathVariable Integer idLancamento) {
         lancamentoRepository.deleteById(idLancamento);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
+    @PostMapping("/importarArquivoOfx")
+    public Object importarArquivoOfx(@RequestParam Map<String, String> payload) {
+        try {
+            String idConta = payload.get("idconta");//pBody.get("idConta").toString();
+
+            //List<Lancamento> lancamentos = arquivoOfx.recuperaLancamentos("/home/ubuntu/extrato.ofx", idConta);
+            List<Lancamento> lancamentos = arquivoOfx.recuperaLancamentos("C:\\Users\\asmel\\Documentos\\extrato.ofx", idConta);
+
+            lancamentos = defineCategorias(lancamentos);
+
+            for(Lancamento lancamento : lancamentos){
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(lancamento.getDtlancamento());
+                int ano = cal.get(Calendar.YEAR);
+                int mes = cal.get(Calendar.MONTH) + 1;
+                Lancamento lancJaExistente = lancamentoRepository.verificaReferenciaOfx(lancamento.getReferenciaofx(), ano, mes);
+                if(lancJaExistente == null) {
+                    lancamento.setIdconta(Integer.parseInt(idConta));
+                    lancamentoRepository.save(lancamento);
+                }else{
+                    System.out.println("LANCAMENTO JA EXISTENTE: " + lancamento.getDtlancamento() + " - " + lancamento.getDescricao() + " - " + lancamento.getValor());
+                }
+            }
+
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private List<Lancamento> defineCategorias(List<Lancamento> lancamentos) {
+        List<PalavraChave> listaPalavraChaves = palavraChaveRepository.findAll();
+        for(Lancamento lancamento : lancamentos){
+            for(PalavraChave palavraChave : listaPalavraChaves) {
+                String descricao = lancamento.getDescricao().toLowerCase();
+                String palavra = palavraChave.getPalavra().toLowerCase();
+                if(descricao.contains(palavra)){
+                    if(lancamento.getSubcategoria() != null){
+                        System.out.println("Mais de uma palavra-chave foi indentificada para um lançamento");
+                        System.out.println("Descrição do lançamento: " + descricao);
+                        System.out.println("Palavra-chave: " + palavra);
+                    }else {
+                        lancamento.setSubcategoria(palavraChave.getIdsubcategoria());
+                    }
+                }
+            }
+        }
+        return lancamentos;
     }
 }
