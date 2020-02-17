@@ -141,7 +141,7 @@ public class LancamentoResource {
         try {
             String idConta = payload.get("idconta");//pBody.get("idConta").toString();
 
-            List<Lancamento> lancamentos = arquivoOfx.recuperaLancamentos("/home/ubuntu/extrato.ofx", idConta);
+            List<Lancamento> lancamentos = arquivoOfx.recuperaLancamentos("/home/ec2-user/extrato.ofx", idConta);
             //List<Lancamento> lancamentos = arquivoOfx.recuperaLancamentos("C:\\Users\\asmel\\Documentos\\extrato.ofx", idConta);
 
             lancamentos = defineCategorias(lancamentos);
