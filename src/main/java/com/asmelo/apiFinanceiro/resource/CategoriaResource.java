@@ -16,13 +16,13 @@ public class CategoriaResource {
     CategoriaRepository categoriaRepository;
 
 
-    @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
+    @CrossOrigin(origins = {"http://localhost:4200", "http://54.233.130.189"})
     @GetMapping(value = "")
     public List<Categoria> findAll() {
         return categoriaRepository.findAll();
     }
 
-    @CrossOrigin(origins = {"http://localhost:4200", "http://54.207.40.169"})
+    @CrossOrigin(origins = {"http://localhost:4200", "http://54.233.130.189"})
     @PostMapping(value = "/")
     public HashMap<String, List<Categoria>> save(@RequestBody final Categoria categoria) {
         categoriaRepository.save(categoria);
